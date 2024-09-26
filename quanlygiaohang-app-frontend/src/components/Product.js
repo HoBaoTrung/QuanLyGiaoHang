@@ -80,14 +80,24 @@ const Product = () => {
                                     <div className="mr-3">
                                         <h3>
                                             {d.selected && (
-                                                <h2 className="text-success">
-                                                    {isShipperView ? 'Bạn đã được chọn để giao hàng' : 'Đã có shipper nhận giao'}
-                                                </h2>
+                                                <div>
+                                                    <h2 className="text-success">
+                                                        {isShipperView ? 'Bạn đã được chọn để giao hàng' : <>Đã có shipper nhận giao
+                                                            <br></br>
+                                                            <Link to={`/shipperDetail/${d.shipper.id}`}>
+                                                                <Button variant="info" className="mt-4 mb-3">Xem shipper</Button>
+                                                            </Link>
+                                                        </>}
+
+                                                    </h2>
+
+                                                </div>
                                             )}
                                             <Image className="mr-2" src={d.shipper.user.avatar} style={{ width: '5rem' }} />
                                             {d.shipper.user.username}<br />
                                             Giá vận chuyển: {formatter.format(d.price)}Đ
                                         </h3>
+
                                     </div>
                                     {d.selected !== true ?
                                         <div>
@@ -100,7 +110,7 @@ const Product = () => {
                                                     .filter(obj => obj !== d)
                                                     .map(obj => obj);
 
-                                                console.info(selectVoucher)
+
 
                                                 let res = await authApi().post(endpoint['pay'],
                                                     {
@@ -124,7 +134,7 @@ const Product = () => {
                             ))}
 
 
-                            {dauGias.length<1? <h1 className="text-danger mt-3">Chưa có shipper đấu giá</h1>:<></>}
+                            {dauGias.length < 1 ? <h1 className="text-danger mt-3">Chưa có shipper đấu giá</h1> : <></>}
 
                             {
                                 product.paymentDate && (
@@ -142,13 +152,13 @@ const Product = () => {
                                     <UploadImage onImageChange={handleImageChange} />
                                     <Button variant="success" className="mt-3"
                                         onClick={() => {
-                                           
+
                                             if (proofImg.current !== null) {
                                                 let form = new FormData();
                                                 form.append('image', proofImg.current)
                                                 let res = authApi().post(endpoint['add-shipper-proof'](productId), form)
                                             }
-                                            else {alert("Hãy nhập hình minh chứng")}
+                                            else { alert("Hãy nhập hình minh chứng") }
 
 
 
