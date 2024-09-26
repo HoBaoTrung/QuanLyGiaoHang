@@ -1,0 +1,155 @@
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+}
+
+.logo-icon {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin-right: 5px;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 1000;
+    /* Đảm bảo header nằm trên các phần tử khác */
+    border-bottom: 1px solid orange;
+}
+
+.rounded-button {
+    background-color: white;
+    /* Màu nền của nút */
+    color: #007bff;
+    /* Màu chữ */
+    border: 2px solid #007bff;
+    margin-left: 10px;
+    padding: 10px 15px;
+    /* Khoảng cách bên trong nút */
+    font-size: 16px;
+    /* Kích thước chữ */
+    border-radius: 25px;
+    /* Bo tròn góc nút */
+    cursor: pointer;
+    /* Con trỏ chuột khi di chuột qua nút */
+    position: relative;
+    overflow: hidden;
+    /* Đảm bảo gradient không bị tràn ra ngoài */
+    transition: color 0.4s, background-color 0.4s;
+    /* Hiệu ứng chuyển đổi */
+    outline: none;
+    /* Bỏ viền focus mặc định */
+}
+
+.rounded-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff6f61, #007bff);
+    /* Gradient chuyển từ màu này sang màu khác */
+    transition: left 0.4s;
+    /* Hiệu ứng chuyển động của gradient */
+    z-index: 0;
+    /* Đảm bảo gradient nằm dưới văn bản */
+}
+
+.rounded-button:hover::before {
+    left: 100%;
+    /* Di chuyển gradient từ trái sang phải */
+}
+
+.rounded-button:hover {
+    color: #ffffff;
+    /* Màu chữ khi hover */
+    background: #ff6f61;
+    border: 2px solid #ff6f61;
+}
+
+.dropbtn {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.dropbtn:hover {
+    text-decoration: underline;
+    /* Add underline on hover */
+    text-decoration-color: orange;
+    /* Set underline color to red */
+}
+
+.dropbtn:disabled {
+    
+    color: #666;
+    cursor: not-allowed;
+}
+
+
+
+
+.dropdown-icon {
+    margin-left: 8px;
+    transition: transform 0.3s ease-in-out;
+    /* Smooth transition for icon rotation */
+}
+
+.open {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    display: block;
+    position: absolute;
+    background-color: #f9f9f9;
+    width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    top: 100%;
+    /* Position the dropdown content below the button */
+    left: 0;
+    padding: 3px;
+}
+
+
+
+.dropdown-content a {
+    color: black;
+    padding: 12px;
+    text-decoration: none;
+    display: block;
+    border: solid 1px orange;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+    border-bottom: 1px solid red;
+}
+
+.dropdown-text {
+    font-size: 16px;
+    margin-left: 5px;
+  }

@@ -1,0 +1,95 @@
+/* src/ImageSlider.css */
+.slider-container {
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  position: relative;
+}
+
+/* .slider {
+  position: relative;
+  width: 100%;
+  height: 100rem;
+  overflow: hidden;
+} */
+
+/* .slider-image-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+} */
+
+.slider-image {
+  width: 100%;
+  height: auto; /* Đảm bảo hình ảnh tự động điều chỉnh chiều cao */
+  object-fit: cover; /* Đảm bảo hình ảnh phủ đầy không bị biến dạng */
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.slider-image-container.fade .slider-image {
+  opacity: 0;
+}
+
+.slider-image-container.fade .slider-image {
+  opacity: 1;
+}
+
+.slider-image-container.slide-left .slider-image {
+  transform: translateX(100%);
+}
+
+.slider-image-container.slide-right .slider-image {
+  transform: translateX(-100%);
+}
+
+
+.thumbnail-container {
+
+ width: 100%;
+  overflow-x: auto;
+  white-space: nowrap; display: flex;
+  border-bottom: 1px solid;
+  
+}
+
+.thumbnail {
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; 
+  height: 80px;
+  margin: 0 5px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  border-right: 1px solid;
+  color: black;
+  flex: 1; 
+}
+
+.thumbnail.active {
+  color: orange;
+  opacity: 1;
+}
+
+h2{
+    font-family: 'Montserrat', Helvetica, sans-serif;
+    font-size: 28px;
+    line-height: initial;
+    color: #00467f;
+    text-transform: uppercase;
+   
+    font-weight: bold;
+
+}
+
+.section-banner {
+ 
+  justify-content: space-between;
+  padding: 60px 0 0;
+  align-items: center;
+  display: flex;
+  
+}
+
+
+  
