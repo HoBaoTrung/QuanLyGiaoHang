@@ -460,9 +460,9 @@ CREATE TABLE `voucher`
 `expiration_date` date not null
 );
 insert into `voucher`(`name`, `value`,`measurement`, `expiration_date`) values
-('Khuyến mãi 1', 1000,'VNĐ', '2025-08-01'),('Khuyến mãi 2', 2000,'VNĐ', '2025-08-01'),
-('Khuyến mãi 3', 3000,'VNĐ', '2025-08-01'),('Khuyến mãi 4', 4000,'VNĐ', '2025-08-01'),('Khuyến mãi 5', 5000,'VNĐ', '2025-08-01'),
-('Giảm 25%', 25,'%', '2025-08-01');
+('Khuyến mãi 1', 1000,'VNĐ', '2025-11-01'),('Khuyến mãi 2', 2000,'VNĐ', '2025-11-01'),
+('Khuyến mãi 3', 3000,'VNĐ', '2025-11-01'),('Khuyến mãi 4', 4000,'VNĐ', '2025-11-01'),('Khuyến mãi 5', 5000,'VNĐ', '2025-11-01'),
+('Giảm 25%', 25,'%', '2025-11-01');
 
 CREATE TABLE `user_have_voucher`
 (
