@@ -1,0 +1,53 @@
+.chat-inbox {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3 ;
+    transform: none;
+  }
+  
+  .chat-inbox.open {
+    height: 400px;
+    width: 360px;
+    bottom: 0;
+    right: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column; /* Đảm bảo hiển thị theo chiều dọc */
+    justify-content: flex-end; /* Đặt nội dung từ trên xuống dưới */
+  }
+  
+  .chat-inbox-header {
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .chat-box {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .conversation-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .conversation-list li {
+    padding: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .conversation-list li:hover {
+    background-color: #eee;
+  }
+  

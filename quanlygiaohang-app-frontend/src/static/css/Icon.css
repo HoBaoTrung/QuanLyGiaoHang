@@ -1,0 +1,16 @@
+.contact-item {
+    display: flex;
+    align-items: center; /* Canh giữa icon và text theo chiều dọc */
+    gap: 10px; /* Khoảng cách giữa icon và text */
+    margin-bottom: 10px;
+  }
+  
+  .icon {
+    font-size: 17px; /* Kích thước icon */
+    color: #333; /* Màu sắc của icon */
+  }
+  
+  .text {
+    font-size: 16px; /* Kích thước chữ */
+    color: #666; /* Màu sắc của text */
+  }

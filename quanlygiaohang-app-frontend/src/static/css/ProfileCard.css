@@ -1,0 +1,37 @@
+.profile-card {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+.profile-name {
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #0056b3;
+}
+
+.comment-card {
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comment-list {
+  max-height: 160px;  /* Giới hạn chiều cao tối đa */
+  overflow-y: auto;  /* Kích hoạt cuộn dọc khi có nhiều bình luận */
+  padding-right: 10px; /* Tạo khoảng trống để tránh thanh cuộn đè lên text */
+}
+
+.comment-list p {
+  word-wrap: break-word; /* Tự động xuống dòng nếu bình luận quá dài */
+  margin-bottom: 10px;
+}

@@ -1,0 +1,24 @@
+.star-rating {
+    display: inline-flex;
+    cursor: pointer;
+  }
+  
+  .star {
+    font-size: 2rem;
+    color: #d3d3d3; /* Màu sao chưa được đánh giá */
+    transition: color 0.2s;
+  }
+  
+  .star.filled {
+    color: #ffd700; /* Màu sao đã được đánh giá */
+  }
+  
+  .star-rating span:hover {
+    color: #ffcc00; /* Màu sao khi di chuột qua */
+  }
+  
+  .rating-result {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #333;
+  }
