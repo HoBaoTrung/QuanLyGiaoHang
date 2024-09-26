@@ -73,43 +73,52 @@ Once the application is running, you can access the following roles:
 ---
 
 ## 📂 Database Structure
-![Database_QuanLyGiaoHang](https://github.com/user-attachments/assets/820be9be-6781-48de-aa41-a343413d5fe9)
+![Database_QuanLyGiaoHang](https://github.com/user-attachments/assets/1e7f78bf-e959-478a-a727-f9da4dd7b783)
 
 
 ---
 ## 🖼️ Some pictures of the website
 
 **Sign up**
-![register](https://github.com/user-attachments/assets/3c734bce-aa42-449a-9262-322392745301)
+![signup](https://github.com/user-attachments/assets/9aa0c5b8-5335-4326-a6ec-a22ce8a291db)
 
-**Header**
-![header](https://github.com/user-attachments/assets/eab96151-a8a3-44c8-b9e5-aea873117bac)
+
+**Home**
+![home](https://github.com/user-attachments/assets/02409cdc-a3a4-4562-89a4-18d468ae37fa)
+
 
 **Create order**
-![create_order](https://github.com/user-attachments/assets/5c8fe5e5-cf2e-46b4-8186-677301e6d202)
+![create_order](https://github.com/user-attachments/assets/3bf8bbc7-d576-4216-8b47-c4d168873a5c)
+
 
 **Owner order detail**
-![view_owner_product](https://github.com/user-attachments/assets/288d0005-3997-4b27-9961-ccf6d2eee12c)
+![owner_order_detail](https://github.com/user-attachments/assets/213343c4-dc76-4275-a81f-e57572db2412)
+
 
 **Shipper info**
-![view_shipper_info](https://github.com/user-attachments/assets/2889f990-832c-43db-b4e8-95533c36bc30)
+![shipper_info](https://github.com/user-attachments/assets/45bb16e1-de35-4936-b3df-52ec8d167070)
+
 
 
 **List owner voucher**
-![owner_voucher](https://github.com/user-attachments/assets/055c8a60-832a-4382-85fd-bcc6042a3388)
+![owner_voucher](https://github.com/user-attachments/assets/3c57ce10-5663-443e-8af6-ae285f37be7d)
+
 
 **Bid on deliveries (shipper)**
-![Bid_on_Deliveries](https://github.com/user-attachments/assets/a5d18542-2aa5-4d2e-a62f-ca44ae239b99)
+![Bid_on_deliveries](https://github.com/user-attachments/assets/24e9ffc2-ed6e-4a34-aaa6-451c14c57179)
+
 
 
 **Order detail for shipper (after shipper is selected)**
-![order_detail(view_of_shipper)](https://github.com/user-attachments/assets/f4f1ae1f-edbd-4419-9112-81ba8f8cda03)
+![order_detail](https://github.com/user-attachments/assets/094dbcb4-7c50-44fb-8b3f-2667b21bdcb4)
+
 
 **Administration interface**
-![category_manage](https://github.com/user-attachments/assets/3146928b-2cc3-4db6-88c5-37a82fd4b74c)
-![service_manage](https://github.com/user-attachments/assets/836e3d2f-3e73-425e-b906-19a3caf73640)
-![statistic](https://github.com/user-attachments/assets/28a728a4-bcc0-4c48-aa59-365a7f9f69fa)
-![statistic_by_service](https://github.com/user-attachments/assets/bed69153-7cf2-43dd-b23f-bb175f95fc74)
+![category_manage](https://github.com/user-attachments/assets/f97c3fb9-0d80-4398-ae66-5cffe22dd805)
+![service_manage](https://github.com/user-attachments/assets/685fbb7d-29ab-4413-8924-9cacd8d1923f)
+![statistic](https://github.com/user-attachments/assets/03e0a853-aa42-46a5-b28a-ac9f7098fac3)
+![statistic_by_service](https://github.com/user-attachments/assets/8e87da4a-4448-43a2-a484-a52a3e5ab869)
+
 
 
 
