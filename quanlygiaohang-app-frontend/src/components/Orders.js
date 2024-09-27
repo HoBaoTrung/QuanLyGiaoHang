@@ -53,7 +53,9 @@ const Orders = () => {
   useEffect(() => {
     loadProduct();
   }, [orderStatus, page, filterData, checkPay]);
-
+  useEffect(() => {
+    setPage(1);
+  }, [orderStatus]);
 
   const formatter = new Intl.NumberFormat('vi-VN', {
     style: 'decimal',

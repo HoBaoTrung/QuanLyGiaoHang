@@ -13,13 +13,13 @@ import java.util.Map;
 
 public class ProductSpecifications {
 
-    public static Specification<Product> productByShipper(Long shipperId, Map<String, String> params) {
+    public static Specification<Product> productByShipper(User user, Map<String, String> params) {
         return (root, query, criteriaBuilder) -> {
             Subquery<Long> subquery = query.subquery(Long.class);
             Root<DauGia> dauGiaRoot = subquery.from(DauGia.class);
             subquery.select(dauGiaRoot.get("product").get("id"));
             subquery.where(
-                    criteriaBuilder.equal(dauGiaRoot.get("shipper").get("id"), shipperId)
+                    criteriaBuilder.equal(dauGiaRoot.get("shipper").get("id"), user.getShipper().getId())
             );
 
             // Main query condition based on statusParam
@@ -29,6 +29,7 @@ public class ProductSpecifications {
             if (statusParam != null && !statusParam.isEmpty()) {
                 mainCondition = criteriaBuilder.and(
                         criteriaBuilder.not(root.get("id").in(subquery)),
+                        criteriaBuilder.notEqual(root.get("user").get("id"), user.getId()),
                         criteriaBuilder.isNull(root.get("paymentDate"))
                 );
             }
@@ -42,14 +43,15 @@ public class ProductSpecifications {
             return criteriaBuilder.and(serviceIdPredicate);
         };
     }
-    public static Specification<Product> productByFromProvince(Integer fromId) {
-        return (root, query, criteriaBuilder) ->
-             root.get("fromDistrictId").get("provinceId").get("id").in(fromId);
+    public static Specification<Product> productByProvince(Integer provinceId, boolean isSender) {
+        return (root, query, criteriaBuilder) ->{
+            String status = "fromDistrictId";
+            if(!isSender){status = "toDistrictId";}
+            return root.get(status).get("provinceId").get("id").in(provinceId);
+        };
+
     }
-    public static Specification<Product> productByToProvince(Integer toId) {
-        return (root, query, criteriaBuilder) ->
-                root.get("toDistrictId").get("provinceId").get("id").in(toId);
-    }
+
 
     public static Specification<Product> findByUser(User currentUser) {
         return (root, query, criteriaBuilder) ->

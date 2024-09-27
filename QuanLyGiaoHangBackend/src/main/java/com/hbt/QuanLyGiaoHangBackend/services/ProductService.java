@@ -158,10 +158,10 @@ public class ProductService {
             String fromParam = params.get("from");
             String toParam = params.get("to");
             if (fromParam != null && !fromParam.isEmpty()) {
-                specProduct= specProduct.and(ProductSpecifications.productByFromProvince(Integer.parseInt(fromParam)));
+                specProduct= specProduct.and(ProductSpecifications.productByProvince(Integer.parseInt(fromParam),true));
             }
             if (toParam != null && !toParam.isEmpty()) {
-                specProduct= specProduct.and(ProductSpecifications.productByToProvince(Integer.parseInt(toParam)));
+                specProduct= specProduct.and(ProductSpecifications.productByProvince(Integer.parseInt(toParam), false));
             }
 
             String statusParam = params.get("status");
@@ -176,7 +176,7 @@ public class ProductService {
                         products = productRepository.findAll(specProduct, pageable).getContent();
                         return orderMapper.toOrdersResponseList(products);
                     case "NotYetPriced":
-                        specProduct = specProduct.and(ProductSpecifications.productByShipper(currentUser.getShipper().getId(), params));
+                        specProduct = specProduct.and(ProductSpecifications.productByShipper(currentUser, params));
                         products = productRepository.findAll(specProduct, pageable).getContent();
                         return orderMapper.toOrdersResponseList(products);
                     case "AwaitingSelection":
