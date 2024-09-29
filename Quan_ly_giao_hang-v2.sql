@@ -372,6 +372,7 @@ INSERT INTO districts (district_name, province_id) VALUES
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `id` bigint NOT NULL AUTO_INCREMENT primary key,
+  `active` tinyint(1) DEFAULT 1,
   `email` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL unique,
   `phone` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL unique,
   `username` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL unique,
@@ -426,6 +427,16 @@ insert into `user_role`(`user_id`, `role_id`) values
 (2,2),(2,3),(3,2),(3,3),(4,2),(4,3),(5,2),(5,3),(6,2),(6,3),
 (7,2),(8,2),(9,2),(10,2),(11,2),(12,2),(13,2),(14,2),(15,2),(16,2);
 
+create table verification_token (
+id bigint not null auto_increment,
+token varchar(255) not null,
+expiry_date DATETIME,
+user_id bigint not null,
+PRIMARY KEY (`id`),
+foreign key(user_id) references `user`(id)
+);
+
+
 --
 -- Table structure for table `shipper`
 --
@@ -460,7 +471,7 @@ CREATE TABLE `voucher`
 `expiration_date` date not null
 );
 insert into `voucher`(`name`, `value`,`measurement`, `expiration_date`) values
-('Khuyến mãi 1', 1000,'VNĐ', '2025-11-01'),('Khuyến mãi 2', 2000,'VNĐ', '2025-11-01'),
+('Khuyến mãi 1', 1000,'VNĐ', '2025-1-01'),('Khuyến mãi 2', 2000,'VNĐ', '2025-11-01'),
 ('Khuyến mãi 3', 3000,'VNĐ', '2025-11-01'),('Khuyến mãi 4', 4000,'VNĐ', '2025-11-01'),('Khuyến mãi 5', 5000,'VNĐ', '2025-11-01'),
 ('Giảm 25%', 25,'%', '2025-11-01');
 
@@ -479,7 +490,8 @@ insert into  `user_have_voucher`(`quantity`, `user_id`, `voucher_id`) VALUES
     (3, 7, 1), (1, 7, 2), (2, 7, 3), (3, 7, 4), (1, 7, 5),
     (2, 8, 1), (3, 8, 2), (1, 8, 3), (2, 8, 4), (3, 8, 5),
     (1, 9, 1), (2, 9, 2), (3, 9, 3), (1, 9, 4), (2, 9, 5),
-    (3, 10, 1), (1, 10, 2), (2, 10, 3), (3, 10, 4), (1, 10, 5);
+    (3, 10, 1), (1, 10, 2), (2, 10, 3), (3, 10, 4), (1, 10, 5)
+    ,(3, 1, 1), (1, 1, 2), (2, 1, 3), (3, 1, 4);
 
 CREATE TABLE `service`(id int primary key auto_increment not null,
 `name` varchar(250) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
