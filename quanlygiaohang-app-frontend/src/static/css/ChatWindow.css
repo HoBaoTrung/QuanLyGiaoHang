@@ -1,0 +1,40 @@
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    height: 400px; /* Chiều cao container */
+    overflow-y: auto; /* Tạo thanh cuộn khi tin nhắn quá nhiều */
+  }
+
+
+.message {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+  }
+  
+  .sent {
+    background-color: #dcf8c6; /* Màu nền cho tin nhắn đã gửi (xanh nhạt) */
+    align-self: flex-end; /* Canh phải */
+    border-top-right-radius: 0;
+  }
+  
+  .received {
+    background-color: #dfe5ea; /* Màu nền cho tin nhắn nhận (trắng) */
+    align-self: flex-start; /* Canh trái */
+    border-top-left-radius: 0;
+  }
+  
+  .message small {
+    font-size: 10px;
+    color: #777;
+    margin-top: 5px;
+    align-self: flex-end;
+  }
+  

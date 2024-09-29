@@ -1,19 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../static/css/ProfileCard.css';
 import '../static/css/StarRating.css';
-import { Button, Card, Col, Form, Image, Row, Spinner } from 'react-bootstrap';
-import { MyUserContext } from '../App';
+import { Button, Card, Col, Image, Row, Spinner } from 'react-bootstrap';
 import Apis, { authApi, endpoint } from '../configs/Apis';
 import { useParams } from 'react-router-dom';
 import Comment from '../common/Comment';
+import ChatWindow from '../common/ChatWindow';
 
 
 const ShipperDetail = () => {
     const [ownerRating, setOwnerRating] = useState(null);
     const [hoveredStar, setHoveredStar] = useState(null);
     const [averageReview, setAverageReview] = useState(null);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);//shipper
     const { shipperId } = useParams()
+    const [showChatList, setShowChatList] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const handleBack = () => {
+        setSelectedUser(null);  // Quay lại danh sách chat
+        setShowChatList(true);
+    };
     const handleMouseEnter = (index) => {
         setHoveredStar(index);
     };
@@ -75,9 +81,8 @@ const ShipperDetail = () => {
 
     };
 
-
-
     useEffect(() => {
+
         loadOwnerRating();
         loadRate(); loadShipper()
     }, []);
@@ -98,8 +103,13 @@ const ShipperDetail = () => {
                                 className="profile-image"
                             />
                             <Button
+                                onClick={() => {
 
-                                className='mt-5'>Nhắn tin</Button>
+                                    setSelectedUser(user.id)
+                                }}
+                                className='mt-5'>
+                                Nhắn tin
+                            </Button>
 
                         </div>
 
@@ -142,8 +152,9 @@ const ShipperDetail = () => {
             < Col md={7}>
                 <Comment shipperId={shipperId} />
             </Col>
-
+            {selectedUser && <ChatWindow id={selectedUser} name={user.username} onBack={handleBack} />}
         </Row >
+
     );
 }
 export default ShipperDetail;

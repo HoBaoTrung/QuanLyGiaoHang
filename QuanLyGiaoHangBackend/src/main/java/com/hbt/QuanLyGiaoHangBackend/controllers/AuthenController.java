@@ -6,12 +6,15 @@ import com.hbt.QuanLyGiaoHangBackend.dto.response.AuthenticationResponse;
 import com.hbt.QuanLyGiaoHangBackend.exception.DuplicateFieldException;
 import com.hbt.QuanLyGiaoHangBackend.services.AuthenticationService;
 import com.hbt.QuanLyGiaoHangBackend.services.UserService;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -28,8 +31,13 @@ public class AuthenController {
     @CrossOrigin
     public ResponseEntity<String> login(@RequestBody AuthenticationRequest request)
     {
-        AuthenticationResponse response = authService.login(request);
+        AuthenticationResponse response =null;
+        try {
+            response =  authService.login(request);
+        }
+        catch (Exception e){return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);}
 
+        if(response==null) return new ResponseEntity<>("Tài khoản chưa xác nhận",HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(response.getToken(), HttpStatus.OK);
     }
 
@@ -50,9 +58,24 @@ public class AuthenController {
         } catch (DuplicateFieldException ex) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getErrors());
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
 
 
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyAccount(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
+        boolean verified = userService.verifyUser(token);
+        if (verified) {
+            // Redirect to login with success status
+            response.sendRedirect("http://localhost:3000/login?status=success");
+        } else {
+            // Redirect to login with fail status
+            response.sendRedirect("http://localhost:3000/login?status=fail");
+        }
+        return ResponseEntity.ok().build();
     }
 
 }

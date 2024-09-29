@@ -26,6 +26,11 @@ import ManagerShipperDetail from './adminComponents/ManagerShipperDetail';
 import ManagerCategory from './adminComponents/ManageCategory';
 import ManagerService from './adminComponents/ManageService';
 import Stats from './adminComponents/Stats';
+import ManagerVoucher from './adminComponents/ManageVoucher';
+import ChatIcon from './common/ChatIcon';
+
+
+
 export const MyUserContext = createContext()
 function App() {
   const [user, dispatch] = useReducer(MyUserReducer, cookies.load("user") || null)
@@ -33,12 +38,15 @@ function App() {
     user.data.roles.some(item => item.name === 'ADMIN') ?
       "admin" : "notAdmin"
     : "null"
+
+    
+
   return (
     <>
       <MyUserContext.Provider value={[user, dispatch]}>
 
         <BrowserRouter>
-
+        <ChatIcon />
           <Header />
           <Routes>
             <Route path="/" element={<Layout />}>
@@ -66,6 +74,7 @@ function App() {
                   <Route path="orders" element={<ManagerUser />} />
                   <Route path="services" element={<ManagerService />} />
                   <Route path="categories" element={<ManagerCategory />} />
+                  <Route path="vouchers" element={<ManagerVoucher />} />
                   <Route path="stats" element={<Stats />} />
                 </Route>
               </Route>
@@ -80,7 +89,8 @@ function App() {
 
         </BrowserRouter>
       </MyUserContext.Provider>
-
+      
+      
     </>
   );
 }

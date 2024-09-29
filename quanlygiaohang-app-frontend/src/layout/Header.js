@@ -1,14 +1,14 @@
 import { Container, Image, Nav, Navbar, } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { MyUserContext } from "../App";
 import { useContext, useState } from "react";
-import { faBox, faCaretDown, faCog, faSignOutAlt, faTicket, faTicketAlt, faUserCog, faUserShield } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faCaretDown, faCog, faSignOutAlt, faTicket, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import '../static/css/Logo.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 const Header = () => {
-    const nav = useNavigate()
+  
     const [isOpen, setIsOpen] = useState(null);
     const toggleDropdown = (dropdown) => {
 
@@ -73,7 +73,7 @@ const Header = () => {
                                             </Link>
                                             <Link to={user === null ? "/login" : "/orders/owner"}>
                                                 <FontAwesomeIcon icon={faBox} />
-                                                <span className="dropdown-text">XEM ĐƠN HÀNG ĐÃ CỦA BẠN</span>
+                                                <span className="dropdown-text">XEM ĐƠN HÀNG CỦA BẠN</span>
                                             </Link>
                                             <Link to={user === null ? "/login" : "/vouchers"}>
                                                 <FontAwesomeIcon icon={faTicket} />

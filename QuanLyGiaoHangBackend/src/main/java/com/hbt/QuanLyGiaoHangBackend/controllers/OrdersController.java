@@ -127,8 +127,8 @@ public class OrdersController {
             OrderDetailResponse p = productService.getProductById(request.getDauGiaSelected().getDauGiaPK().getProductId());
 
             // Xử lý trả về từ VNPAY, gửi email thông báo
-//            emailService.sendRefuseEmail(request.getDauGiaSet(), p);
-//            emailService.sendEmailAlertSuccess(toSelectedEmail, p);
+            emailService.sendRefuseEmail(request.getDauGiaSet(), p);
+            emailService.sendEmailAlertSuccess(toSelectedEmail, p);
 
             //cập nhật csdl nếu thành công
 

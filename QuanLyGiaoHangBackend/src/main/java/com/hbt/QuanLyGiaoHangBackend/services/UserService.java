@@ -12,15 +12,10 @@ import com.hbt.QuanLyGiaoHangBackend.exception.ErrorCode;
 import com.hbt.QuanLyGiaoHangBackend.mapper.CommentMapper;
 import com.hbt.QuanLyGiaoHangBackend.mapper.ShipperMapper;
 import com.hbt.QuanLyGiaoHangBackend.mapper.UserMapper;
-import com.hbt.QuanLyGiaoHangBackend.pojo.Comment;
-import com.hbt.QuanLyGiaoHangBackend.pojo.Role;
-import com.hbt.QuanLyGiaoHangBackend.pojo.Shipper;
-import com.hbt.QuanLyGiaoHangBackend.pojo.User;
-import com.hbt.QuanLyGiaoHangBackend.repositories.CommentRepository;
-import com.hbt.QuanLyGiaoHangBackend.repositories.RoleRepository;
-import com.hbt.QuanLyGiaoHangBackend.repositories.ShipperRepository;
-import com.hbt.QuanLyGiaoHangBackend.repositories.UserRepository;
+import com.hbt.QuanLyGiaoHangBackend.pojo.*;
+import com.hbt.QuanLyGiaoHangBackend.repositories.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,10 +35,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -50,6 +48,8 @@ import java.util.logging.Level;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
+    @Autowired
+    private VerificationTokenRepository tokenRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -75,7 +75,8 @@ public class UserService {
     @Autowired
     private Cloudinary cloudinary;
 
-
+    @Autowired
+    private EmailService emailService;
 
     //chỉ cho phép user (và admin) lấy thông tin của user đó
     @PostAuthorize("returnObject.username == authentication.name or hasRole('ADMIN')")
@@ -108,18 +109,18 @@ public class UserService {
         return u;
     }
 
-    public ShipperResponse getShipperInfoById(long id){
+    public ShipperResponse getShipperInfoById(long id) {
         Shipper s = this.shipperRepo.findById(id).orElse(null);
         return shipperMapper.toShipperResponse(s);
     }
 
-    public List<?> getCommentByShipperID(Long shipperId){
+    public List<?> getCommentByShipperID(Long shipperId) {
         Shipper shipper = shipperRepo.findById(shipperId)
                 .orElseThrow(() -> new RuntimeException("Shipper không tồn tại"));
         return commentMapper.toCommentsResponseList(shipper.getCommentSet());
     }
 
-    public UserResponse createUser(RegisterRequest request, MultipartFile avatar) {
+    public UserResponse createUser(RegisterRequest request, MultipartFile avatar) throws MessagingException {
         Map<String, String> errors = new HashMap<>();
         if (userRepository.existsByEmail(request.getEmail())) {
             errors.put("email", "Email đã tồn tại");
@@ -138,7 +139,7 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setPhone(request.getPhone());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        user.setActive(false);
         if (avatar != null && !avatar.isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
@@ -147,7 +148,9 @@ public class UserService {
             } catch (IOException ex) {
                 Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else{user.setAvatar("https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg");}
+        } else {
+            user.setAvatar("https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg");
+        }
 
         HashSet<Role> roles = new HashSet<>();
         roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
@@ -157,8 +160,8 @@ public class UserService {
 
                 if (shipperRepo.existsByCmnd(request.getCmnd())) {
                     errors.put("cmnd", "CMND đã tồn tại");
-                }
-                else{s = new Shipper();
+                } else {
+                    s = new Shipper();
                     s.setCmnd(request.getCmnd());
                     s.setUser(user);
                     s.setActive(false);
@@ -175,14 +178,99 @@ public class UserService {
             // Tiếp tục quá trình đăng ký nếu không có lỗi
             user.setRoles(roles);
             user = userRepository.save(user);
-            if(s!=null)
-            shipperRepo.save(s);
+            if (s != null)
+                shipperRepo.save(s);
 
         } catch (DataIntegrityViolationException e) {
             System.out.println("Có lỗi về ràng buộc dữ liệu: " + e.getMessage());
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(token, user);
+        tokenRepository.save(verificationToken);
+        String verificationLink = "http://localhost:8080/QuanLyGiaoHang/api/auth/verify?token=" + token;
+
+        String content = "<!DOCTYPE html>" +
+                "<html lang=\"en\">" +
+                "<head>" +
+                "    <meta charset=\"UTF-8\">" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
+                "    <style>" +
+                "        .button {\n" +
+                "  border: none;\n" +
+                "  color: white;\n" +
+                "  padding: 16px 32px;\n" +
+                "  text-align: center;\n" +
+                "  text-decoration: none;\n" +
+                "  display: inline-block;\n" +
+                "  font-size: 16px;\n" +
+                "  margin: 4px 2px;\n" +
+                "  transition-duration: 0.4s;\n" +
+                "  cursor: pointer;\n" +
+                "}\n" +
+                ".button1 {\n" +
+                "  background-color: white; \n" +
+                "  color: black; \n" +
+                "  border: 2px solid #04AA6D;\n" +
+                "}\n" +
+                ".button1:hover {\n" +
+                "  background-color: #04AA6D;\n" +
+                "  color: white;\n" +
+                "}\n" +
+
+                "    </style>" +
+                "</head>" +
+                "<body>" +
+                "<h1 style='color:green;'>XÁC NHẬN TÀI KHOẢN CỦA BẠN</h1>" +
+                "<div><a href=\"" + verificationLink + " \" class=\"button button1\">Xác nhận</a></div>" +
+                "</body>" +
+                "</html>";
+
+        emailService.sendHtmlEmail(user.getEmail(), "Xác nhận tài khoản", content);
+
         return userMapper.toUserResponse(user);
+    }
+
+    public boolean verifyUser(String token) {
+        Optional<VerificationToken> verificationToken = tokenRepository.findByToken(token);
+
+        if (verificationToken.isPresent()) {
+            VerificationToken tokenEntity = verificationToken.get();
+
+            // Kiểm tra thời gian hết hạn
+            if (tokenEntity.getExpiryDate().isBefore(LocalDateTime.now())) {
+                return false; // Token đã hết hạn
+            }
+
+            User user = tokenEntity.getUser();
+            user.setActive(true);
+            userRepository.save(user);
+
+            // Xoá token sau khi xác thực thành công
+            tokenRepository.delete(tokenEntity);
+            return true;
+        }
+
+        return false;
+    }
+
+    // Xóa tài khoản chưa xác nhận sau 1 phút
+    public void deleteExpiredTokens() {
+        LocalDateTime now = LocalDateTime.now();
+        tokenRepository.deleteByExpiryDateBefore(now);
+    }
+
+    @Scheduled(fixedRate = 5000 * 100000) // Chạy mỗi 500000 giây
+    public void removeExpiredAccounts() {
+        // Xóa tất cả các token hết hạn
+        deleteExpiredTokens();
+
+        // Sau khi token bị xóa, xóa luôn tài khoản chưa kích hoạt
+        userRepository.deleteAll(
+                userRepository.findAll().stream()
+                        .filter(user -> !user.getActive()) // Tìm tài khoản chưa kích hoạt
+                        .collect(Collectors.toList())
+        );
     }
 }

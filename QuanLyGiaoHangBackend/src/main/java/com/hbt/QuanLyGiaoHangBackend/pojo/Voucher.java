@@ -7,6 +7,8 @@ package com.hbt.QuanLyGiaoHangBackend.pojo;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -45,6 +47,7 @@ public class Voucher implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date expirationDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "voucher")
+    @JsonIgnore
     private Set<UserHaveVoucher> userHaveVoucherSet;
 
     public Voucher() {

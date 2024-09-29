@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import '../static/css/AdminDashboard.css';
-import { FaBox, FaChartBar, FaTags, FaTruck, FaUser } from 'react-icons/fa';
+import { FaBox, FaChartBar, FaTags, FaTicketAlt, FaTruck, FaUser } from 'react-icons/fa';
 import { MdBuild } from 'react-icons/md';
 const AdminDashboard = () => {
   return (
@@ -14,6 +14,7 @@ const AdminDashboard = () => {
           <li><Link to="/admin/orders"><FaBox /> ORDER</Link></li>
           <li><Link to="/admin/categories"><FaTags /> CATEGORY</Link></li>
           <li><Link to="/admin/services"><MdBuild /> SERVICE</Link></li>
+          <li><Link to="/admin/vouchers"><FaTicketAlt /> VOUCHER</Link></li>
           <li><Link to="/admin/stats"><FaChartBar /> STATS</Link></li>
         </ul>
       </div>

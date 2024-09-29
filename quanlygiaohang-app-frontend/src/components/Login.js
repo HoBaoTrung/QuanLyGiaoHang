@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import '../static/css/Register.css';
 import image from '../static/image/image.png';
 import { Container, Row, Col, Form, Button, Spinner } from 'react-bootstrap';
-import { Link, Navigate, useNavigate } from "react-router-dom"
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
 import { MyUserContext } from "../App";
 import cookies from 'react-cookies'
 import Apis, { authApi, endpoint } from '../configs/Apis';
 import { getAuth, signInWithCustomToken } from 'firebase/auth';
 const Login = () => {
-    const nav = useNavigate()
+   
 
     const [user, dispatch] = useContext(MyUserContext)
     const [username, setUsername] = useState();
@@ -39,40 +39,60 @@ const Login = () => {
 
 
             } catch (error) {
-                setErr("Tài khoản hoặc mật khẩu không đúng")
+
+                setErr(error.response.data)
                 setLoading(false)
             }
-           
+
         }
         process()
-        
-       
+
+
 
     }
 
     const authenticateWithFirebase = async () => {
         try {
-           
-          // Gửi JWT token lên Spring Boot để lấy Firebase custom token
-          const response = await authApi().get(endpoint['get-firebase-token'])
 
-          const  firebaseToken  = response.data;
-          
-          // Đăng nhập vào Firebase bằng custom token
-          const auth = getAuth();
-          await signInWithCustomToken(auth, firebaseToken);
-          console.log("Đăng nhập Firebase thành công!");
+            // Gửi JWT token lên Spring Boot để lấy Firebase custom token
+            const response = await authApi().get(endpoint['get-firebase-token'])
+
+            const firebaseToken = response.data;
+console.info(firebaseToken)
+            // Đăng nhập vào Firebase bằng custom token
+            const auth = getAuth();
+            await signInWithCustomToken(auth, firebaseToken);
+            console.log("Đăng nhập Firebase thành công!");
         } catch (error) {
-          console.error("Lỗi khi xác thực Firebase", error);
+            console.error("Lỗi khi xác thực Firebase", error);
         }
-      };
+    };
 
-    if (user !== null){
+
+    const [message, setMessage] = useState("");
+    const [messageColor, setMessageColor] = useState("black");
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const status = params.get("status");
+
+        // Xử lý trạng thái success hoặc fail từ query parameter
+        if (status === "success") {
+            setMessage("Xác thực thành công!");
+            setMessageColor("green");
+        } else if (status === "fail") {
+            setMessage("Xác thực thất bại!");
+            setMessageColor("red");
+        }
+    }, [location]);
+
+    if (user !== null) {
         authenticateWithFirebase();
         return <Navigate to="/" />
-    } 
+    }
 
-   
+
 
     return (
 
@@ -82,13 +102,13 @@ const Login = () => {
                     alt="image" />
             </Col>
             <Col xs={12} md={7} >
-
+                <h1 style={{ color: messageColor }} className='text-center'>{message}</h1>
                 <Form onSubmit={login} className='mt-1'>
                     <div>
                         <h2 className='text-center'>ĐĂNG NHẬP</h2>
                         <h4 className='text-center' style={{ color: 'orange' }}>Chúng tôi luôn đồng hành cùng bạn</h4>
                     </div>
-
+                    {err ? <h3 className='text-danger'>{err}</h3> : <></>}
                     <Container>
                         <Form.Group className="mb-3" >
                             <Form.Label>

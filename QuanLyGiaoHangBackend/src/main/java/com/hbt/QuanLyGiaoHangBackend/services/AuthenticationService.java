@@ -29,14 +29,16 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public AuthenticationResponse login(AuthenticationRequest request) {
+    public AuthenticationResponse login(AuthenticationRequest request) throws Exception {
         User u = userRepository.findByUsername(request.getUsername()).orElseThrow(
                 () ->   new AppException(ErrorCode.USER_NOT_EXISTED)
         );
 
+        if(!u.getActive()){return null;}
+
         boolean auth = passwordEncoder.matches(request.getPassword(), u.getPassword());
         if(!auth)
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        {throw new Exception("Sai mật khẩu.");}
 
         String jwtToken = jwtService.generateTokenLogin(u);
 

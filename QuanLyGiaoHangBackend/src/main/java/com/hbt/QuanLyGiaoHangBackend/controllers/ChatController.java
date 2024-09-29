@@ -33,16 +33,15 @@ public class ChatController {
     @GetMapping("/customer/firebase-custom-token")
     public String getFirebaseCustomToken() throws FirebaseAuthException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-        String token= jwt.getTokenValue();
 
-        if (jwtService.validateTokenLogin(token)) {
+        try {
+            // Tạo custom token
+            String customToken =  FirebaseAuth.getInstance().createCustomToken(authentication.getName());
 
-            String uid = jwtService.getUsernameFromToken(token);  // Sử dụng username làm uid
-
-            return FirebaseAuth.getInstance().createCustomToken(uid);
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+            return customToken; // Trả về token cho client
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+            return "Error creating custom token: " + e.getMessage();
         }
     }
 }

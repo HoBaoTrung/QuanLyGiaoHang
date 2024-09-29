@@ -43,7 +43,8 @@ export const endpoint = {
     'admin-addOrUpdate-service': `${SERVER_CONTEXT}/api/admin/addOrUpdateService/`,
     'admin-statistic-price': `${SERVER_CONTEXT}/api/admin/price-by-period/`,
     'admin-statistic-quantity': `${SERVER_CONTEXT}/api/admin/count-by-period/`,
-    'admin-statistic-service': `${SERVER_CONTEXT}/api/admin/count-by-service/`
+    'admin-statistic-service': `${SERVER_CONTEXT}/api/admin/count-by-service/`,
+    'get-admin-voucher': `${SERVER_CONTEXT}/api/admin/vouchers/`,
 }
 export const authApi = () => {
     return axios.create({

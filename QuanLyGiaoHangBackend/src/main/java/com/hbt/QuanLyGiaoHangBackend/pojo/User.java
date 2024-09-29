@@ -56,6 +56,8 @@ public class User implements Serializable  , UserDetails {
     @Column(name = "avatar")
     private String avatar;
 
+    private Boolean active;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Shipper shipper;

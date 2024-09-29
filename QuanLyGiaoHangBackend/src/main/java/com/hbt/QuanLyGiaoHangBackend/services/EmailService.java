@@ -23,7 +23,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    private void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
+    public void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
