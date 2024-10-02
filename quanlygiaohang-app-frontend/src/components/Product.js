@@ -1,13 +1,15 @@
 
-import { useEffect, useState, useCallback, useRef } from "react"
+import { useEffect, useState, useCallback, useRef, useContext } from "react"
 import { Button, Col, Container, Form, Image, Row, Spinner } from "react-bootstrap"
 import { authApi, endpoint } from "../configs/Apis"
-import { useParams, useLocation, Link } from "react-router-dom"
+import { useParams, useLocation, Link, useNavigate } from "react-router-dom"
 import MySpinner from "../layout/Spinner"
 import UploadImage from "../common/UploadImage"
+import { MyUserContext } from "../App"
 
 const Product = () => {
     const { productId } = useParams();
+    const [user] = useContext(MyUserContext);
     const proofImg = useRef(null);
     const [product, setProduct] = useState(null);
     const [dauGias, setDauGias] = useState(null);
@@ -15,6 +17,9 @@ const Product = () => {
     const [voucher, setVoucher] = useState(null);
     const [selectVoucher, setSelectVoucher] = useState(null);
     const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const adminView = queryParams.get('adminview') === 'true';
+const nav = useNavigate()
 
     const handleImageChange = (image) => {
         proofImg.current = image;
@@ -75,66 +80,67 @@ const Product = () => {
                     <Row>
                         <Col md={7} xs={6}>
                             <Image src={product.image} style={{ width: '35rem' }} />
-                            {dauGias && dauGias.map(d => (
-                                <div className="mt-3" style={{ borderBottom: '1px solid', display: 'flex' }}>
-                                    <div className="mr-3">
-                                        <h3>
-                                            {d.selected && (
-                                                <div>
-                                                    <h2 className="text-success">
-                                                        {isShipperView ? 'Bạn đã được chọn để giao hàng' : <>Đã có shipper nhận giao
-                                                            <br></br>
-                                                            <Link to={`/shipperDetail/${d.shipper.id}`}>
-                                                                <Button variant="info" className="mt-4 mb-3">Xem shipper</Button>
-                                                            </Link>
-                                                        </>}
-
-                                                    </h2>
-
-                                                </div>
-                                            )}
-                                            <Image className="mr-2" src={d.shipper.user.avatar} style={{ width: '5rem' }} />
-                                            {d.shipper.user.username}<br />
-                                            Giá vận chuyển: {formatter.format(d.price)}Đ
-                                        </h3>
-
-                                    </div>
-                                    {d.selected !== true ?
-                                        <div>
-                                            <Link to={`/shipperDetail/${d.shipper.id}`}>
-                                                <Button variant="info" style={{ "display": "block" }} className="mt-4 mb-3">Xem shipper</Button>
-                                            </Link>
-                                            <Button variant="success" style={{ "display": "block" }} type="submit" onClick={async () => {
-
-                                                const listRefuse = Array.from(dauGias)
-                                                    .filter(obj => obj !== d)
-                                                    .map(obj => obj);
-
-
-
-                                                let res = await authApi().post(endpoint['pay'],
-                                                    {
-                                                        dauGiaSelected: d,
-                                                        voucherId: selectVoucher
-                                                    });
-                                                const updatedDauGiaPay = {
-                                                    dauGiaSet: listRefuse,
-                                                    dauGiaSelected: d,
-                                                    voucherId: selectVoucher
-                                                };
-                                                sessionStorage.setItem('dauGiaPay', JSON.stringify(updatedDauGiaPay));
-                                                window.location.href = (res.data)
-
-                                            }
-                                            }>Chọn</Button>
-
-                                        </div> :
-                                        <></>}
-                                </div>
-                            ))}
-
-
                             {dauGias.length < 1 ? <h1 className="text-danger mt-3">Chưa có shipper đấu giá</h1> : <></>}
+                            <div style={{ height: '20rem', overflowY: "auto" }}>
+                                {dauGias && dauGias.map(d => (
+                                    <div className="mt-3" style={{ borderBottom: '1px solid', display: 'flex' }}>
+                                        <div className="mr-3">
+                                            <h3>
+                                                {d.selected && (
+                                                    <div>
+                                                        <h2 className="text-success">
+                                                            {isShipperView ? 'Bạn đã được chọn để giao hàng' : <>Đã có shipper nhận giao
+                                                                <br></br>
+                                                                <Link to={`/shipperDetail/${d.shipper.id}`}>
+                                                                    <Button variant="info" className="mt-4 mb-3">Xem shipper</Button>
+                                                                </Link>
+                                                            </>}
+
+                                                        </h2>
+
+                                                    </div>
+                                                )}
+                                                <Image className="mr-2" src={d.shipper.user.avatar} style={{ width: '5rem' }} />
+                                                {d.shipper.user.username}<br />
+                                                Giá vận chuyển: {formatter.format(d.price)}Đ
+                                            </h3>
+
+                                        </div>
+                                        {d.selected !== true ?
+                                            <div>
+                                                <Link to={`/shipperDetail/${d.shipper.id}`}>
+                                                    <Button variant="info" style={{ "display": "block" }} className="mt-4 mb-3">Xem shipper</Button>
+                                                </Link>
+                                                {!adminView &&
+                                                    <Button variant="success" style={{ "display": "block" }} type="submit" onClick={async () => {
+
+                                                        const listRefuse = Array.from(dauGias)
+                                                            .filter(obj => obj !== d)
+                                                            .map(obj => obj);
+
+                                                        let res = await authApi().post(endpoint['pay'],
+                                                            {
+                                                                dauGiaSelected: d,
+                                                                voucherId: selectVoucher
+                                                            });
+                                                        const updatedDauGiaPay = {
+                                                            dauGiaSet: listRefuse,
+                                                            dauGiaSelected: d,
+                                                            voucherId: selectVoucher
+                                                        };
+                                                        sessionStorage.setItem('dauGiaPay', JSON.stringify(updatedDauGiaPay));
+                                                        window.location.href = (res.data)
+
+                                                    }
+                                                    }>Chọn</Button>}
+
+                                            </div> :
+                                            <></>}
+                                    </div>
+                                ))}
+                            </div>
+
+
 
                             {
                                 product.paymentDate && (
@@ -208,7 +214,7 @@ const Product = () => {
                             <h5>Số điện thoại: {product.receiverPhone}</h5>
 
                             <br />
-                            {!isShipperView && (
+                            {(!isShipperView && !adminView) && (
                                 <>
                                     <h5>Voucher của bạn</h5>
                                     <Form.Select onChange={(e) => setSelectVoucher(e.target.value)}>
@@ -219,6 +225,15 @@ const Product = () => {
                                             </option>
                                         )) : <MySpinner />}
                                     </Form.Select>
+                                </>
+                            )}
+
+                            {(adminView) && (
+                                <>
+                                {user.data.id===product.user.id ? 
+                                    <Button variant='info' className='mr-2' onClick={() => nav(`/myprofile`)}>Xem user</Button>:
+                                    <Button variant='info' className='mr-2' onClick={() => nav(`/admin/customersDetail/${product.user.id}`)}>Xem user</Button>
+                                }
                                 </>
                             )}
                         </Col>

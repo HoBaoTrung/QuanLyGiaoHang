@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer, useState } from 'react';
+import { createContext, useReducer } from 'react';
 import './App.css';
 import cookies from 'react-cookies'
 import Header from './layout/Header';
@@ -28,6 +28,8 @@ import ManagerService from './adminComponents/ManageService';
 import Stats from './adminComponents/Stats';
 import ManagerVoucher from './adminComponents/ManageVoucher';
 import ChatIcon from './common/ChatIcon';
+import ManagerOrder from './adminComponents/ManageOrders';
+import ManagerUserDetail from './adminComponents/ManagerUserDetail';
 
 
 
@@ -52,7 +54,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="about" element={<About />} />
-              <Route path="myprofile" element={<Profile />} />
+              <Route path="myprofile" element={<Profile  />} />
               <Route path="shipperDetail/:shipperId" element={<ShipperDetail />} />
               <Route path="vouchers" element={<Voucher />} />
               <Route path="register" element={<Register />} />
@@ -69,9 +71,10 @@ function App() {
               <Route element={<PrivateRoute userRole={userRole} />}>
                 <Route path="/admin" element={<AdminDashboard />}>
                   <Route path="customers" element={<ManagerUser />} />
+                  <Route path="customersDetail/:userId" element={<ManagerUserDetail />} />
                   <Route path="shippers" element={<ManagerShipper />} />
                   <Route path="adminShippersDetail/:shipperId" element={<ManagerShipperDetail />} />
-                  <Route path="orders" element={<ManagerUser />} />
+                  <Route path="orders" element={<ManagerOrder />} />
                   <Route path="services" element={<ManagerService />} />
                   <Route path="categories" element={<ManagerCategory />} />
                   <Route path="vouchers" element={<ManagerVoucher />} />
@@ -85,7 +88,7 @@ function App() {
 
           </Routes>
 
-          {!window.location.pathname.startsWith('/admin') && <Footer />}
+            <Footer />
 
         </BrowserRouter>
       </MyUserContext.Provider>

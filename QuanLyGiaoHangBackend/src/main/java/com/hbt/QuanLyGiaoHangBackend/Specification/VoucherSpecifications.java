@@ -28,13 +28,10 @@ public class VoucherSpecifications {
 //    }
 
 
-    public static Specification<Voucher> userActiveVouchers(long userId, Boolean active) {
+    public static Specification<Voucher> userActiveVouchers(Boolean active) {
         return (root, query, criteriaBuilder) -> {
             // Lấy ngày hiện tại
             Date today = new Date();
-
-            // Join với bảng phụ UserHaveVoucher
-            Join<Object, Object> userHaveVoucherJoin = root.join("userHaveVoucherSet", JoinType.INNER);
 
             // Điều kiện để kiểm tra voucher có active hay không (expirationDate sau ngày hiện tại)
             Predicate activeCondition = null;

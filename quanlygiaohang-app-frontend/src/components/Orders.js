@@ -107,10 +107,7 @@ const Orders = () => {
     return renderPriced(p);
   };
 
-  const handleCheck = (image) => {
-    console.info(image)
-  };
-
+  
   return (
     <>
       <Container fluid>

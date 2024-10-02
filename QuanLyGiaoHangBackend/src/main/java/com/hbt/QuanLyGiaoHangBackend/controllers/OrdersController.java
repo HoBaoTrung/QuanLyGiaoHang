@@ -10,6 +10,9 @@ import com.hbt.QuanLyGiaoHangBackend.repositories.ProductRepository;
 import com.hbt.QuanLyGiaoHangBackend.services.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,23 +64,29 @@ public class OrdersController {
 
     @PostMapping(path = "customer/orders/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
-    public ResponseEntity<List<?>> orders(@RequestParam Map<String, String> params, Authentication authentication) {
+    public ResponseEntity<Object> orders(@RequestParam Map<String, String> params, Authentication authentication) {
 
-        List<?> res = this.productService.getProducts(params);
+        Object res = this.productService.getProducts(params);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("admin/allOrders/")
-    public List<Product> getAllProducts() {
-        return productService.getAllProductsForAdmin();
+
+
+    @PostMapping("admin/allOrders/")
+    public PagedModel<Product> getAllProducts(@RequestParam Map<String, String> params, PagedResourcesAssembler assembler) {
+        params.put("status","admin");
+        System.out.println(params);
+        Object res = this.productService.getProducts(params);
+        System.out.println(res);
+        return assembler.toModel((Page<Product>)res);
     }
 
 
     @PostAuthorize("returnObject.user.username == authentication.name or hasRole('ADMIN') or @dauGiaRepository.existsByProductIdAndShipperWithSelected(#id, authentication.name)")
     @GetMapping("customer/getOrder/{orderId}/")
-    public Product getProductByIDForUser(@PathVariable("orderId") Long id, Authentication authentication){
-        return this.productService.getProductByIdForUser(id,authentication.getName());
+    public Product getProductByIDForUser(@PathVariable("orderId") Long id){
+        return this.productService.getProductByIdForUser(id);
 
     }
 
@@ -174,6 +183,11 @@ public class OrdersController {
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
 
+    @PreAuthorize("returnObject != null && returnObject.user.username == authentication.name or hasRole('ADMIN')")
+    @DeleteMapping("customer/deleteOrder/{orderId}/")
+    public void deleteProductByIDForUser(@PathVariable("orderId") Long id){
+        productRepository.delete(productRepository.findById(id).orElse(null));
 
+    }
 
 }

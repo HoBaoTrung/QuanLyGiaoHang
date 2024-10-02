@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, {  useEffect,  useState } from 'react';
 import '../static/css/ProfileCard.css';
 import '../static/css/StarRating.css';
 import Switch from "react-switch";
-import { Button, Card, Col, Form, Image, Row, Spinner } from 'react-bootstrap';
+import {Card, Col, Image, Row, Spinner } from 'react-bootstrap';
 
 import Apis, { authApi, endpoint } from '../configs/Apis';
 import { useParams } from 'react-router-dom';
@@ -24,6 +24,7 @@ const ManagerShipperDetail = () => {
             setAverageReview(res.data)
 
             res = await authApi().get(endpoint['get-shipper'](shipperId))
+            console.log(res)
             setUser(res.data)
             setIsActive(res.data.active)
 

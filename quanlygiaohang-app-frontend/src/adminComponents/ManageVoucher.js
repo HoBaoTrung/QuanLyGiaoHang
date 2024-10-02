@@ -11,37 +11,45 @@ const ManagerVoucher = () => {
     const [totalPages, setTotalPages] = useState(2);
     const [vouchers, setVoucher] = useState(null)
     const [loading, setLoading] = useState(false)
-    const [cateName, setCateName] = useState(null)
-    const [formData, setFormData] = useState({});
+    const [voucherName, setvoucherName] = useState(null)
+    const [inputValue, setInputValue] = useState("");
+    const [selectValue, setSelectValue] = useState("");
 
-    const handleInputChange = (e, cateId) => {
-        setFormData({
-            ...formData,
-            [cateId]: e.target.value,  // Cập nhật giá trị riêng cho mỗi category
-        });
-    };
 
-    const handleSubmit = (cateId) => {
-        
+    const [measurements] = useState([
+        { value: "%" },
+        { value: "VNĐ" },
+    ])
+    // const handleInputChange = (e, voucherId) => {
+    //     setFormData({
+    //         ...formData,
+    //         [voucherId]: e.target.value,
+    //     });
+    // };
+
+    const handleSubmit = (voucherId) => {
+
         let form = new FormData()
-        if (cateId === 0) {form.append("cateName", cateName.trim()); setCurrentPage(1)}
-     
-        if (formData[cateId] === undefined || formData[cateId] === "")
-            alert("Vui lòng nhập mệnh giá")
-        else {
-                form.append("id", cateId)
-                form.append("priceCate", formData[cateId])
-                let res = authApi().post(endpoint['admin-addOrUpdate-category'], form)
-                setLoading(true)
-            }
-        
+        if (voucherId === 0) { 
+            form.append("voucherName", voucherName.trim()); 
+            setCurrentPage(1) }
+
+        // if (formData[voucherId] === undefined || formData[voucherId] === "")
+        //     alert("Vui lòng nhập mệnh giá")
+        // else {
+        //     form.append("id", voucherId)
+        //     form.append("priceCate", formData[voucherId])
+        //     let res = authApi().post(endpoint['admin-addOrUpdate-category'], form)
+        //     setLoading(true)
+        // }
+
     };
 
     const loadVoucher = async (page) => {
         try {
-            let url = `${endpoint['get-admin-voucher']}?page=${page-1}&isActive=true`
+            let url = `${endpoint['get-admin-voucher']}?page=${page - 1}&isActive=true`
             const res = await authApi().get(url)
-        console.info(res)
+            console.info(res)
             setTotalPages(res.data.page.totalPages)
             setVoucher(res.data._embedded.voucherList)
             setLoading(false)
@@ -67,21 +75,29 @@ const ManagerVoucher = () => {
     return (
         <>
             <Form>
-                <Form.Group className="mb-3 p-3" style={{ border: "solid 1px red", width: "40%" }}>
+                <Form.Group className="mb-3 p-3" style={{ border: "solid 1px red", width: "60%" }}>
                     <Form.Label>Thêm voucher</Form.Label>
                     <div className='d-flex'>
 
-                        <Form.Control style={{ width: "300px", marginRight: "2px" }} type="text" placeholder="Tên loại hàng"
-                            onChange={(e) => setCateName(e.target.value)}
+                        <Form.Control style={{ width: "300px", marginRight: "2px" }} type="text" placeholder="Tên voucher"
+                            onChange={(e) => setvoucherName(e.target.value)}
                         />
                         <Form.Control style={{ width: "130px", marginRight: "2px" }} type="number" min="5000" placeholder="Nhập giá"
-                            onChange={(e) => handleInputChange(e, 0)}
-                            value={formData[0] || ""}
+                            // onChange={(e) => handleInputChange(e, 0)}
+                            // value={formData[0] || ""}
                         />
+                        <Form.Select className='mr-2' aria-label="Default select example">
+                            <option>Choose measurement</option>
+                            {measurements.map(m => (
+                                <option value={m.id}>{m.value}</option>
+                            ))}
+
+                        </Form.Select>
                         <Button variant="primary"
                             onClick={() => {
-                                if ((cateName.trim() === "" || cateName === null)) alert("Vui lòng nhập tên loại hàng")
-                                else handleSubmit(0)}}
+                                if ((voucherName.trim() === "" || voucherName === null)) alert("Vui lòng nhập tên loại hàng")
+                                else handleSubmit(0)
+                            }}
 
                         >Thêm</Button></div>
                 </Form.Group>
@@ -97,28 +113,42 @@ const ManagerVoucher = () => {
                                 <Card.Body>
                                     <h6>{c.name}</h6>
                                     <Card.Text>
-                                        Mệnh giá: {c.price}
+                                        Mệnh giá: {c.value}{c.measurement}
+
                                     </Card.Text>
                                     <Form>
                                         <Form.Group className="mb-3" >
                                             <Form.Label>Sửa giá</Form.Label>
-                                            <div className='d-flex'>
-                                                <Form.Control style={{ width: "150px", marginRight: "2px" }} type="number" min="5000" placeholder="Nhập giá"
-                                                    onChange={(e) => handleInputChange(e, c.id)}
-                                                    value={formData[c.id] || ""}
-                                                />
-                                                <Button variant="primary"
-                                                    onClick={() => handleSubmit(c.id)}
 
-                                                >Chỉnh giá</Button></div>
+                                            <Form.Control style={{ width: "150px", marginRight: "2px" }} type="number" placeholder="Nhập giá"
+                                                // onChange={(e) => handleInputChange(e, c.id)}
+                                                onChange={(e) => setInputValue(e.target.value)}
+                                                // value={formData[c.id] || ""}
+                                            />
+                                            <Form.Select
+                                             onChange={(e) => setSelectValue(e.target.value)}
+                                            style={{ width: "150px", marginTop: "2px" }}
+                                                className='mr-2' aria-label="Default select example">
+                                                <option>Choose measurement</option>
+                                                {measurements.map(m => (
+                                                    <option selected={c.measurement === m.value} value={m.value}>{m.value}</option>
+                                                ))}
+
+                                            </Form.Select>
+
                                         </Form.Group>
+                                        <Button style={{ marginRight: "2px" }} variant="primary"
+                                            onClick={() => handleSubmit(c.id)}
+
+                                        >Chỉnh giá</Button>
+                                        <Button variant="danger" onClick={() => {
+                                            let res = authApi().delete(endpoint['admin-delete-category'](c.id))
+                                            setLoading(true)
+                                        }}>Xóa</Button>
 
                                     </Form>
 
-                                    <Button variant="danger" onClick={()=>{
-                                        let res = authApi().delete(endpoint['admin-delete-category'](c.id))
-                                        setLoading(true)
-                                    }}>Xóa</Button>
+
                                 </Card.Body>
                             </Card>
                         </Col>

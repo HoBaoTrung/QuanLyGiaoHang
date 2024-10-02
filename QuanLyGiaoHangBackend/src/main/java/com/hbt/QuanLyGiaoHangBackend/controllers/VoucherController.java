@@ -24,7 +24,6 @@ public class VoucherController {
     @GetMapping("admin/vouchers/")
     public PagedModel<Voucher> getAllVouchers(@RequestParam Map<String,String> params, PagedResourcesAssembler assembler) {
         // Trả về danh sách voucher cho admin quản lý
-
         return  assembler.toModel(voucherService.getAllVouchers(params));
 
     }

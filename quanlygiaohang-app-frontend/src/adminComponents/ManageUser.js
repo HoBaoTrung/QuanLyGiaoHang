@@ -3,11 +3,12 @@ import '../static/css/AdminDashboard.css';
 import { Button, Image, Spinner, Table } from 'react-bootstrap';
 import { authApi, endpoint } from '../configs/Apis';
 import Pagination from '../layout/Pagination';
+import { useNavigate } from 'react-router-dom';
 
 
 const ManagerUser = () => {
     const [listUser, setListUser] = useState(null)
-
+    const nav=useNavigate()
     const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
     const [totalPages, setTotalPages] = useState(2); // Tổng số trang
     const loadUser = async (page) => {
@@ -74,7 +75,7 @@ const ManagerUser = () => {
                                 <Image height={'50px'} src={u.avatar} />
                             </td>
                             <td>
-                                <Button variant='danger'>Xóa</Button>
+                                <Button variant='info' onClick={() => nav(`/admin/customersDetail/${u.id}`)}>Xem</Button>
                             </td>
                         </tr>)}
 

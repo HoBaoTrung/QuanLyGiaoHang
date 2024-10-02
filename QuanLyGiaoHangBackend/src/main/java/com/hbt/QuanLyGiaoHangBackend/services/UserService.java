@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -82,6 +83,11 @@ public class UserService {
     @PostAuthorize("returnObject.username == authentication.name or hasRole('ADMIN')")
     public User getUserByID(long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    @PreAuthorize("returnObject!=null && returnObject.username == authentication.name or hasRole('ADMIN')")
+    public void deleteUserByID(long id) {
+         userRepository.delete(getUserByID(id));
     }
 
     public Page<User> getAllUsers(Map<String, String> params) {

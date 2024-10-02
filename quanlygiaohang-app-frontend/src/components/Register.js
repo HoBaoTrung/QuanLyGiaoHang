@@ -10,7 +10,7 @@ const Register = () => {
     const nav = useNavigate()
 
     const img = useRef(null)
-    const [avatar, setAvatar] = useState(null);
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleImageChange = (image) => {
         img.current = image;
@@ -52,14 +52,6 @@ const Register = () => {
         "errPhone": '',
         'errMail': null
     });
-
-    useEffect(() => {
-
-        // Chạy mã khi msgs thay đổi
-        console.log('Value of errCCCD has changed:', msgs);
-
-    }, [msgs]);
-
 
 
     const updateMessage = async () => {

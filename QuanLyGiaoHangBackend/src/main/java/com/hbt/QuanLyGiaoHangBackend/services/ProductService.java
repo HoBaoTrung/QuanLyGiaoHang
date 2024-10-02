@@ -73,7 +73,7 @@ public class ProductService {
     @Autowired
     private Cloudinary cloudinary;
 
-    public Product getProductByIdForUser(long productId, String username) {
+    public Product getProductByIdForUser(long productId) {
         Product product = productRepository.findById(productId).orElse(null);
         return product;
     }
@@ -130,7 +130,7 @@ public class ProductService {
     @Value("${PAGE_SIZE}")
     private int pageSize;
 
-    public List<?> getProducts(@RequestParam Map<String, String> params) {
+    public Object getProducts(@RequestParam Map<String, String> params) {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         int page = 0;
@@ -163,13 +163,15 @@ public class ProductService {
             if (toParam != null && !toParam.isEmpty()) {
                 specProduct= specProduct.and(ProductSpecifications.productByProvince(Integer.parseInt(toParam), false));
             }
-
+            boolean isPay = Boolean.parseBoolean(params.get("isPay"));
             String statusParam = params.get("status");
             if (statusParam != null && !statusParam.isEmpty()) {
                 switch (statusParam){
+                    case "admin":
+                        specProduct= specProduct
+                                .and(ProductSpecifications.findByPaymentDate(isPay));
+                        return productRepository.findAll(specProduct, pageable);
                     case "owner":
-                        boolean isPay = Boolean.parseBoolean(params.get("isPay"));
-
                         specProduct= Specification
                                 .where(ProductSpecifications.findByUser(currentUser))
                                 .and(ProductSpecifications.findByPaymentDate(isPay));
@@ -197,10 +199,6 @@ public class ProductService {
 
     }
 
-    public List<Product> getAllProductsForAdmin() {
-        // Dành cho admin để xem tất cả sản phẩm
-        return productRepository.findAll();
-    }
 
     public String createOrder(int total, String orderInfor, String urlReturn, String locate) {
 

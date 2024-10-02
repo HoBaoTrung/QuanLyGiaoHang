@@ -5,23 +5,56 @@ import { Button, Card, Col, Form, Image, Row, Spinner } from 'react-bootstrap';
 import { MyUserContext } from '../App';
 import Apis, { authApi, endpoint } from '../configs/Apis';
 import ShipperInfo from '../common/ShipperInfo';
-
+import UploadImage from '../common/UploadImage';
+import * as Validator from '../configs/Validator';
 const Profile = () => {
     const [userComment, setUserComment] = useState(null);
     const [averageReview, setAverageReview] = useState(null);
-    const [user,] = useContext(MyUserContext);
+    const [user] = useContext(MyUserContext);
+    const [iShipper] = useState(user.data.roles.some(item => item.name === 'SHIPPER'));
     const [comments, setComment] = useState(null);
+    const img = useRef(null)
+    const [newInfo, setNewInfo] = useState({
+        "confirmNewPassword": "",
+        "newPassword": "",
+        "email": "",
+        "phone": "",
+        "cmnd":""
+    });
+    const [msgs, setMsgs] = useState({
+        "errCCCD": "",
+        "errUsername": "",
+        'errPassword': '',
+        'errConfirmPassword': '',
+        "errPhone": '',
+        'errMail': null
+    });
+
+    const updateMessage = async () => {
+        // Sử dụng hàm callback để đảm bảo trạng thái được cập nhật chính xác
+        setMsgs(prevMsgs => {
+            // prevMsgs là trạng thái hiện tại trước khi cập nhật
+            // Tạo một đối tượng trạng thái mới với giá trị errCCCD được cập nhật
+            const updatedMsgs = {
+                ...prevMsgs, // Sao chép các thuộc tính hiện tại của trạng thái
+                errConfirmPassword: Validator.validateConfirmPassword(newInfo.newPassword, newInfo.confirmNewPassword),
+                errPassword: Validator.validatePassword(newInfo.newPassword),
+                errPhone: Validator.validatePhone(newInfo.phone),
+                errCCCD: Validator.validateCCCD(newInfo.cmnd)
+            };
+            // Trả về trạng thái mới để setMsgs cập nhật
+            return updatedMsgs;
+        });
+    };
 
     const loadaverageReview = async () => {
-        console.info(user)
+
         let res;
         try {
             if (user.data.shipperId !== null) {
                 res = await Apis.get(endpoint['get-average-point'](user.data.shipperId))
                 setAverageReview(res.data)
-
             }
-
         }
         catch (e) { }
 
@@ -41,6 +74,12 @@ const Profile = () => {
 
     };
 
+    const change = (evt, field) => {
+        setNewInfo(current => {
+            return { ...current, [field]: evt.target.value }
+        })
+    }
+
     const addComment = async (e) => {
         e.preventDefault();
         let form = new FormData()
@@ -58,16 +97,62 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        loadComment();
-    }, []);
-    useEffect(() => {
-        loadaverageReview();
+        loadComment(); loadaverageReview();
     }, []);
 
-    if (comments === null && user.data.shipperId !== null)
-        return <Spinner animation="border" />;
+   
+    const update = (evt) => {
+        evt.preventDefault();
 
-    return (
+        const process = async () => {
+            let form = new FormData();
+            form.append("userId",user.data.id)
+            if (newInfo.newPassword && newInfo.newPassword.trim().length !== 0) {
+                if (newInfo.newPassword === newInfo.confirmNewPassword)
+                    form.append("newPassword", newInfo.newPassword)
+            }
+
+
+
+            for (let field in newInfo){
+                if (field !== "confirmNewPassword" && field !== 'newPassword')
+                    form.append(field, user[field]);
+            }
+            if(!img)
+                form.append("avatar", img.current.files[0]);
+            for (let field in newInfo)
+
+               console.info(field,newInfo[field])
+
+            try {
+                
+            }catch (error) {
+
+                if (error.response && error.response.status === 400) {
+
+                    setMsgs(prevState => ({
+                        ...prevState,
+                        errPhone: error.response.data.phone || null,
+                        errUsername: error.response.data.username || null,
+                        errCCCD: error.response.data.cmnd || null,
+                        errMail: error.response.data.email || null
+                    }));
+                    // setLoading(false)
+
+                }
+            }
+        }
+
+
+        process();
+
+    }
+
+if (comments === null && user.data.shipperId !== null)
+    {return <Spinner animation="border" />;}
+
+return (
+    <>
         <Row className="mt-5">
 
             <Col md={5}>
@@ -85,7 +170,7 @@ const Profile = () => {
                                 <p><strong>Số điện thoại:</strong> {user.data.phone}</p>
                                 <p><strong>Vai trò:</strong>KHÁCH HÀNG</p>
                             </> : <>
-                                {/* <p><strong>Đánh giá trung bình:</strong> {averageReview} </p> */}
+                               
                                 <ShipperInfo shipperId={user.data.shipperId} />
 
                             </>}
@@ -128,7 +213,87 @@ const Profile = () => {
 
                 </Col>
                 : <></>}
+
         </Row >
-    );
+        <div>
+            <Row>
+                <Col md={6}>
+                    <Card className="comment-card m-3" style={{ height: "30rem", overflowY: "auto" }} >
+                        <Card.Body>
+                            <h4 className="mb-4">Chỉnh sửa thông tin</h4>
+                            {/* Form nhập bình luận */}
+                            <Form onSubmit={update} >
+
+                                <Form.Group className='mb-2'>
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control type="email" value={userComment} rows={3} placeholder="New Email..."
+                                        onChange={(e) => change(e, "email")}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group className='mb-2'>
+                                    <Form.Label>Phone number</Form.Label>
+                                    <Form.Control pattern="[0-9]{4}[0-9]{3}[0-9]{3}" title="Vui lòng nhập đúng định dạng số điện thoại"
+                                        type="text" value={userComment} rows={3} placeholder="New Email..."
+                                        onChange={(e) => change(e, "phone")}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group className='mb-2'>
+                                    <Form.Label>New password</Form.Label>
+                                    <Form.Control type="password" value={userComment} rows={3} placeholder="New password..."
+                                        onChange={(e) => change(e, "newPassword")}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group className='mb-2'>
+                                    <Form.Label>Confirm new password</Form.Label>
+                                    <Form.Control type="password" value={userComment} rows={3} placeholder="Confirm new password..."
+                                        onChange={(e) => change(e, "confirmNewPassword")}
+                                    />
+                                </Form.Group>
+
+
+                                <Button variant="danger" className='mt-2' type="submit">Cập nhật</Button>
+                            </Form>
+
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col md={6}>
+
+                    <Card className="comment-card m-3" style={{ height: "60%", overflowY: "auto" }} >
+                        <Card.Body>
+                            <h4 className="mb-4">{iShipper ? <>Chỉnh sửa thông tin</> :
+                                <>Đăng ký shipper</>}  </h4>
+                            {/* Form nhập bình luận */}
+                            <Form onSubmit={addComment} >
+
+                                <Form.Group controlId="infoForm">
+                                    <Form.Label>CCCD</Form.Label>
+                                    <Form.Control
+                                        pattern="[0-9]{4}[0-9]{4}[0-9]{4}" title="Vui lòng nhập đúng định dạng số CCCD"
+                                        type="number" rows={3} placeholder="CCCD..."
+                                        onChange={(e) => { setUserComment(e.target.value) }}
+                                    />
+                                </Form.Group>
+
+
+
+                                <Button variant="success" className='mt-2' type="submit">{iShipper ? 'Cập nhật' : "Đăng ký"}</Button>
+                            </Form>
+
+                        </Card.Body>
+
+                    </Card>
+                    <Card className="comment-card m-3" >
+                        <UploadImage onImageChange={(image) => {
+                            img.current = image;
+                        }} /></Card>
+                </Col>
+            </Row>
+        </div>
+    </>
+);
 }
 export default Profile;

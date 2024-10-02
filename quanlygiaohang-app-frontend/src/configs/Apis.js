@@ -19,6 +19,7 @@ export const endpoint = {
     'add-or-update-daugia': `${SERVER_CONTEXT}/api/shipper/addDauGia/`,
 
     'add-order': `${SERVER_CONTEXT}/api/customer/addOrder/`,
+    'delete-order':(productId) =>  `${SERVER_CONTEXT}/api/customer/deleteOrder/${productId}/`,
     'get-orders': `${SERVER_CONTEXT}/api/customer/orders/`,
     'get-order-detail': (productId) => `${SERVER_CONTEXT}/api/customer/getOrder/${productId}/`,
     'pay-return': `${SERVER_CONTEXT}/api/customer/vnpay-return/`,
@@ -35,6 +36,8 @@ export const endpoint = {
     'get-firebase-token': `${SERVER_CONTEXT}/api/customer/firebase-custom-token`,
 
     'get-admin-user': `${SERVER_CONTEXT}/api/admin/getAllUsers/`,
+    'get-userDetail':(userId) => `${SERVER_CONTEXT}/api/customer/getUser/${userId}/`,
+    'delete-user':(userId) => `${SERVER_CONTEXT}/api/customer/deleteUser/${userId}/`,
     'get-admin-shipper': `${SERVER_CONTEXT}/api/admin/getAllShipper/`,
     'put-admin-active-shipper': (shipperId) => `${SERVER_CONTEXT}/api/admin/${shipperId}/toggle`,
     'admin-order': `${SERVER_CONTEXT}/api/admin/allOrders/`,
@@ -45,6 +48,7 @@ export const endpoint = {
     'admin-statistic-quantity': `${SERVER_CONTEXT}/api/admin/count-by-period/`,
     'admin-statistic-service': `${SERVER_CONTEXT}/api/admin/count-by-service/`,
     'get-admin-voucher': `${SERVER_CONTEXT}/api/admin/vouchers/`,
+    'get-admin-orders': `${SERVER_CONTEXT}/api/admin/allOrders/`,
 }
 export const authApi = () => {
     return axios.create({

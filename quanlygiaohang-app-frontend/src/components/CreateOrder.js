@@ -222,9 +222,6 @@ const CreateOrder = () => {
 
     }
 
-
-
-
     return (
         <Container>
 

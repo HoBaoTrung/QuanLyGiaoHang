@@ -35,11 +35,11 @@ public class ShipperController {
     private ShipperService shipperService;
 
     @Value("${PAGE_SIZE}")
-    private Integer pageSize;
+    private String pageSize;
 
     @GetMapping("admin/getAllShipper/")
     public PagedModel<Shipper> getAllShipper(@RequestParam Map<String, String> params, PagedResourcesAssembler assembler){
-        params.put("pageSize", pageSize+"");
+        params.put("pageSize", pageSize);
         return assembler.toModel(shipperService.getAllShipper(params));
     }
 

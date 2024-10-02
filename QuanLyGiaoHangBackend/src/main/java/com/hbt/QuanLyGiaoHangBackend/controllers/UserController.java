@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +39,11 @@ public class UserController {
         return this.userService.getAllUsers(params);
     }
 
-    @GetMapping("customer/getUser/{userId}")
-    public User getUserByID(@PathVariable("userId") Long id){return this.userService.getUserByID(id);}
+
+    @GetMapping("customer/getUser/{userId}/")
+    public User getUserByID(@PathVariable("userId") Long id){
+        return this.userService.getUserByID(id);
+    }
 
     @GetMapping(path = "current-user/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
@@ -46,5 +51,9 @@ public class UserController {
         return new ResponseEntity<>(this.userService.getCurrentUser(), HttpStatus.OK);
     }
 
-
+    @DeleteMapping("customer/deleteUser/{userId}/")
+    public void deleteUserByID(@PathVariable("userId") Long id){
+        System.out.println(id);
+         this.userService.deleteUserByID(id);
+    }
 }
