@@ -529,7 +529,6 @@ CREATE TABLE `product` (
   `receiver_phone` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `note` varchar(150) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
   `image` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  
    `created_date` date not null,
   `payment_date` date DEFAULT null,
   `service_id` int not null,
