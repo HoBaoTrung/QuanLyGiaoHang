@@ -90,6 +90,36 @@ public class UserService {
          userRepository.delete(getUserByID(id));
     }
 
+
+    public void upadteUserByID( Map<String, String> params) {
+        System.out.println(params);
+        User u = this.userRepository.findById(getCurrentUser().getId()).orElse(null);
+        String email=params.get("email"), phone=params.get("phone"), password=params.get("password");
+        Map<String, String> errors = new HashMap<>();
+
+        if(email!=null && !email.isEmpty()){
+            if (userRepository.existsByEmail(email)) {
+                errors.put("email", "Email đã tồn tại");
+            }
+            else{u.setEmail(email);}
+        }
+
+        if(phone!=null && !phone.isEmpty()){
+            if (userRepository.existsByPhone(phone)) {
+                errors.put("phone", "Số điện thoại đã tồn tại");
+            } else {u.setPhone(phone);}
+
+        }
+
+        if(password!=null && !password.isEmpty()){
+            u.setPassword(passwordEncoder.encode(password));
+        }
+        if (!errors.isEmpty()) {
+            throw new DuplicateFieldException(errors);
+        }
+//        userRepository.save(u);
+    }
+
     public Page<User> getAllUsers(Map<String, String> params) {
         Integer page = Integer.parseInt(params.get("page"));
         Integer pageSize = Integer.parseInt(params.get("pageSize"));
@@ -97,15 +127,14 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
-    public UserResponse getCurrentUser() {
+    public User getCurrentUserByUserName(){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
+        return userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    }
 
-        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-
-        UserResponse ur = userMapper.toUserResponse(user);
-
+    public UserResponse getCurrentUser() {
+         UserResponse ur = userMapper.toUserResponse(getCurrentUserByUserName());
         return ur;
     }
 

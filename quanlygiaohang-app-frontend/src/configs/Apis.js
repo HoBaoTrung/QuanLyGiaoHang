@@ -9,6 +9,8 @@ export const endpoint = {
     'register': `${SERVER_CONTEXT}/api/auth/register/`,
     'current-user': `${SERVER_CONTEXT}/api/current-user/`,
     'get-shipper': (shipperID) => `${SERVER_CONTEXT}/api/customer/getShipper/${shipperID}`,
+    'update-user': `${SERVER_CONTEXT}/api/customer/updateUser/`,
+    'add-update-shipper': `${SERVER_CONTEXT}/api/customer/addOrUpdateShipper/`,
 
     'get-all-service': `${SERVER_CONTEXT}/api/public/getAllService/`,
     'get-all-cate': `${SERVER_CONTEXT}/api/public/getAllCate/`,

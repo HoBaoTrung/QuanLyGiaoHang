@@ -12,7 +12,6 @@ const ShipperInfo = ({ shipperId }) => {
             setAverageReview(res.data)
             res = await authApi().get(endpoint['get-shipper'](shipperId))
             setUser(res.data)
-            console.info(res.data)
 
         }
         catch (e) { }

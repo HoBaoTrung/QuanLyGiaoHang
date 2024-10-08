@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import '../static/css/Register.css';
 import image from '../static/image/image.png';
 import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';

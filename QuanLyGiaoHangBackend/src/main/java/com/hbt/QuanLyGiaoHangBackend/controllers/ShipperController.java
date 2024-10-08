@@ -1,6 +1,7 @@
 package com.hbt.QuanLyGiaoHangBackend.controllers;
 
 import com.hbt.QuanLyGiaoHangBackend.dto.response.ShipperResponse;
+import com.hbt.QuanLyGiaoHangBackend.exception.DuplicateFieldException;
 import com.hbt.QuanLyGiaoHangBackend.pojo.Shipper;
 import com.hbt.QuanLyGiaoHangBackend.services.CommentService;
 import com.hbt.QuanLyGiaoHangBackend.services.RateService;
@@ -14,6 +15,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -81,6 +83,22 @@ public class ShipperController {
         boolean active = payload.get("active");
         shipperService.updateActiveStatus(id, active);
         return ResponseEntity.ok("Cập nhật thành công");
+    }
+
+    @PostMapping("customer/addOrUpdateShipper/")
+    public ResponseEntity<?> addOrUpdateShipper(@RequestParam Map<String, String> params
+            ,  @RequestParam(required = false) MultipartFile avatar) {
+        String cmnd = params.get("cmnd");
+
+        boolean isUpdate = Boolean.parseBoolean(params.get("isUpdate"));
+        try {
+            shipperService.addOrUpdateShipper(cmnd, avatar,isUpdate);
+            return ResponseEntity.ok("Cập nhật thành công");
+        }
+        catch (DuplicateFieldException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getErrors());
+        }
+
     }
 
 }
