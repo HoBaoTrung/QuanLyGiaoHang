@@ -1,0 +1,42 @@
+
+version: '3.8'
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: trung@123
+      MYSQL_DATABASE: quan_ly_giao_hang_SpringBoot
+      MYSQL_USER: mydatabase
+      MYSQL_PASSWORD: trung@123
+    ports:
+      - "3336:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      
+  spring-app:
+    image: quanlygiaohang-springboot-app
+    container_name: spring-app
+    build:
+      context: ./QuanLyGiaoHangBackend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/quan_ly_giao_hang_SpringBoot?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: mydatabase
+      SPRING_DATASOURCE_PASSWORD: trung@123
+
+  react-app:
+    image: quanlygiaohang-react-app
+    build:
+      context: ./quanlygiaohang-app-frontend
+      dockerfile: Dockerfile
+    container_name: react-app
+    ports:
+      - "3000:80"  # phục vụ ứng dụng ReactJS trên cổng 80, ánh xạ ra cổng 3000 của máy chủ
+
+volumes:
+  mysql_data:
